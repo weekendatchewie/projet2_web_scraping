@@ -1,15 +1,15 @@
 import requests
 from bs4 import BeautifulSoup
+import csv
 
 # Get the url of the website then analyse its html
-
 page_url = "http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
 url = requests.get(page_url)
-soup = BeautifulSoup(url.text, 'html.parser')
+soup = BeautifulSoup(url.content, 'html.parser')
 
 
 # Get the book title
-title_book = soup.select('h1')
+title_book = soup.find('h1').text
 
 
 # Get the category of the book
@@ -35,3 +35,25 @@ for info in product_info:
     price_with_tax = info. select('tr > td')[3].text
     availabity_book = info. select('tr > td')[5].text
     number_review = info. select('tr > td')[6].text
+
+
+#print(title_book, '\n', category_book, '\n', image_src, '\n', product_description, '\n', upc_book, '\n', price_no_tax, '\n', price_with_tax, '\n', availabity_book, '\n', number_review)
+
+all_info_book = {}
+all_info_book['title'] = title_book
+all_info_book['category'] = category_book
+all_info_book['image'] = image_src
+all_info_book['description'] = product_description
+all_info_book['upc_book'] = upc_book
+all_info_book['price_no_tax'] = price_no_tax
+all_info_book['price_with_tax'] = price_with_tax
+all_info_book['availabity_book'] = availabity_book
+all_info_book['number_review'] = number_review
+
+info_book_header = ['title', 'category', 'image', 'description', 'upc_book', 'price_no_tax', 'price_with_tax', 'availabity_book', 'number_review']
+
+with open('book_info.csv', 'w') as csvfile:
+    fieldnames = list(all_info_book.keys())
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerow(all_info_book)

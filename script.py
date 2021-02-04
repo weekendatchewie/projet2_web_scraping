@@ -2,10 +2,9 @@ import requests
 from bs4 import BeautifulSoup
 
 # Get the url of the website then analyse its html
-
 page_url = "http://books.toscrape.com/"
 url = requests.get(page_url)
-soup = BeautifulSoup(url.text, 'html.parser')
+soup = BeautifulSoup(url.content, 'html.parser')
 
 # Get the "ul" wich contains the list of categories
 # get_ul = soup.find('ul', {"class": "nav-list"})
@@ -26,7 +25,7 @@ for a in a_link:
     a_href = a['href']
     a_href_list.append(a_href)
 
-print(a_href_list)
+# print(a_href_list)
 
 # declare an empty list to keep url link of each category
 url_links = []
@@ -36,6 +35,7 @@ for i in a_href_list:
 
 
 url_links_len = len(url_links)
+print(url_links_len)
 
 # for index in range(1, url_links_len):
     # url_category = url_links[index]
@@ -60,4 +60,4 @@ url_links2 = []
 for i in a_href_list2:
     url_links2.append(page_url + i)
 
-    
+print(url_links2)
