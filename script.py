@@ -131,13 +131,18 @@ for h3 in all_h3:
 url_links2 = []
 
 for i in a_href_list2:
-    url_links2.append(page_url + i)
+    url_links2.append(page_url + 'catalogue/' + i)
 
 print(url_links2[0])
 
 lien_test = url_links2[1]
 print("le lien est " + lien_test)
 
+"""
+
+class Book
+
+"""
 
 class Book:
 
@@ -152,7 +157,40 @@ class Book:
         self.review_rating = review_rating
         self.product_page_url = product_page_url
         self.image_url = image_url
-        print(f"Le livre {title} est bien créé")
+        print(f"Le livre {title} est bien créé \n {category} \n {description} \n {universal_product_code} \n {price_including_tax} \n {price_excluding_tax} \n {number_available} \n {review_rating} \n {product_page_url} \n {image_url}")
 
     def __str__(self):
         return self.title
+
+
+# Get the url of the website then analyse its html
+url = requests.get(lien_test)
+soup = BeautifulSoup(url.content, 'html.parser')
+
+# Get the book title
+title_book = soup.find('h1').text
+
+# Get the category of the book
+ul_category = soup.select('ul.breadcrumb')
+for element in ul_category:
+    category_book = element.select('li')[2].text.strip()
+
+# Get the image of the book
+image_book = soup.select('img')[0]
+image_src = image_book.get('src')
+
+# Get the product description
+product_description = soup.select('article > p')[0].text
+
+# Get the informations of the book
+product_info = soup.select('table.table')
+for info in product_info:
+    upc_book = info. select('tr > td')[0].text
+    price_no_tax = info. select('tr > td')[2].text
+    price_with_tax = info. select('tr > td')[3].text
+    availabity_book = info. select('tr > td')[5].text
+    number_review = info. select('tr > td')[6].text
+
+book_test = Book(title_book, category_book, product_description, upc_book, price_with_tax, price_no_tax, availabity_book, number_review, lien_test, image_src)
+
+print(book_test)
