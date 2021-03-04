@@ -144,6 +144,7 @@ class Book
 
 """
 
+
 class Book:
 
     def __init__(self, title, category, description, universal_product_code, price_including_tax, price_excluding_tax, number_available, review_rating, product_page_url, image_url):
@@ -177,7 +178,8 @@ for element in ul_category:
 
 # Get the image of the book
 image_book = soup.select('img')[0]
-image_src = image_book.get('src')
+# Change the path to get the good link
+image_src = page_url + image_book.get('src').strip('../../')
 
 # Get the product description
 product_description = soup.select('article > p')[0].text
