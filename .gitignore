@@ -1,5 +1,10 @@
+# Environnement virtuel
 /env
+/venv
 
-/book_info.csv
-
+# Plugins IDE
 .idea/
+.vscode/
+
+# Fichiers CSV
+*.csv
