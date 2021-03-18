@@ -51,16 +51,16 @@ class Category:
     def add_link(self, link):
         self.link = link
         print(f"Le nom de la catégorie créée est : {self.name} et le lien est : {link}")
-        
+
     def add_book(self, book):
-        print("On ajoute " + book.title +" à la catégorie " + self.name)
+        print("On ajoute " + book.title + " à la catégorie " + self.name)
         self.books.append(book)
 
     def create_csv(self):
         with open(self.name + '_book_info.csv', 'w') as csvfile:
-            csvfile.write("title,category: \n")
+            csvfile.write("title,category,image: \n")
             for book in self.books:
-                csvfile.write(book.title + "," + book.category + '\n')
+                csvfile.write(book.title + "," + book.category + "," + book.image_url + '\n')
                 # fieldnames = ['title', 'category']
                 # writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                 # writer.writeheader()
@@ -74,12 +74,6 @@ for categoryName in get_names_categories(get_all_categories()):
 
 for i in range(len(get_links_categories(get_all_categories()))):
     list_categories[i].add_link('http://books.toscrape.com/' + get_links_categories(get_all_categories())[i])
-
-url_category = list_categories[0]
-
-"""
-Test boucle sur toutes les categories
-"""
 
 
 class Book:
@@ -102,74 +96,87 @@ class Book:
         return self.title
 
 
-for url_category in list_categories:
+url_category = list_categories[0]
+# for url_category in list_categories:
 
-    url_page = requests.get(url_category.link)
-    soup = BeautifulSoup(url_page.text, 'html.parser')
-    page_header = soup.select('div.page-header')[0].text.strip()
+url_page = requests.get(url_category.link)
+soup = BeautifulSoup(url_page.text, 'html.parser')
+page_header = soup.select('div.page-header')[0].text.strip()
 
-    h3_list = []
-    a_href_list2 = []
-    all_h3 = soup.find_all('h3')
-    for h3 in all_h3:
-        h3_list.append(h3)
-        a_link2 = h3.select('a')
-        for a in a_link2:
-            a_href2 = a['href'].strip('../../../')
-            a_href_list2.append(a_href2)
+h3_list = []
+a_href_list2 = []
+all_h3 = soup.find_all('h3')
+for h3 in all_h3:
+    h3_list.append(h3)
+    a_link2 = h3.select('a')
+    for a in a_link2:
+        a_href2 = a['href'].strip('../../../')
+        a_href_list2.append(a_href2)
 
-    url_links2 = []
+url_links2 = []
 
-    for i in a_href_list2:
-        url_links2.append(page_url + 'catalogue/' + i)
+for i in a_href_list2:
+    url_links2.append(page_url + 'catalogue/' + i)
 
+"""
+Test multi page
+"""
 
-    # lien_test = url_links2[1]
+try:
+    get_next_page = soup.find('li', {"class": "next"})
+    print(get_next_page)
+    a_link_next = get_next_page.find('a')
+    print(a_link_next)
+    a_href_next = a_link_next['href']
+    print(a_href_next)
+    link_next_page = url_category.link.rstrip('index.html') + a_href_next
+    print(link_next_page)
+    url_category.add_link(link_next_page)
+    list_categories.append(link_next_page)
+except AttributeError:
+    print('pas possible')
 
-    """
-    
-    class Book
-    
-    """
+"""
+*****
+"""
 
-    for url_cat in url_links2:
+for url_cat in url_links2:
+    # Get the url of the website then analyse its html
+    url = requests.get(url_cat)
+    soup = BeautifulSoup(url.content, 'html.parser')
 
-        # Get the url of the website then analyse its html
-        url = requests.get(url_cat)
-        soup = BeautifulSoup(url.content, 'html.parser')
+    # Get the book title
+    title_book = soup.find('h1').text
 
-        # Get the book title
-        title_book = soup.find('h1').text
+    # Get the category of the book
+    ul_category = soup.select('ul.breadcrumb')
+    for element in ul_category:
+        category_book = element.select('li')[2].text.strip()
 
-        # Get the category of the book
-        ul_category = soup.select('ul.breadcrumb')
-        for element in ul_category:
-            category_book = element.select('li')[2].text.strip()
+    # Get the image of the book
+    image_book = soup.select('img')[0]
+    # Change the path to get the good link
+    image_src = page_url + image_book.get('src').strip('../../')
 
-        # Get the image of the book
-        image_book = soup.select('img')[0]
-        # Change the path to get the good link
-        image_src = page_url + image_book.get('src').strip('../../')
+    # Get the product description
+    product_description = soup.select('article > p')[0].text
 
-        # Get the product description
-        product_description = soup.select('article > p')[0].text
+    # Get the informations of the book
+    product_info = soup.select('table.table')
+    for info in product_info:
+        upc_book = info. select('tr > td')[0].text
+        price_no_tax = info. select('tr > td')[2].text
+        price_with_tax = info. select('tr > td')[3].text
+        availabity_book = info. select('tr > td')[5].text
+        number_review = info. select('tr > td')[6].text
 
-        # Get the informations of the book
-        product_info = soup.select('table.table')
-        for info in product_info:
-            upc_book = info. select('tr > td')[0].text
-            price_no_tax = info. select('tr > td')[2].text
-            price_with_tax = info. select('tr > td')[3].text
-            availabity_book = info. select('tr > td')[5].text
-            number_review = info. select('tr > td')[6].text
+    list_books = []
+    book_test = Book(title_book, category_book, product_description, upc_book, price_with_tax, price_no_tax, availabity_book, number_review, url_cat, image_src)
+    list_books.append(book_test)
+    for b in list_books:
+        url_category.add_book(b)
+        url_category.create_csv()
 
-        list_books = []
-        book_test = Book(title_book, category_book, product_description, upc_book, price_with_tax, price_no_tax, availabity_book, number_review, url_cat, image_src)
-        list_books.append(book_test)
-        for b in list_books:
-            url_category.add_book(b)
-            url_category.create_csv()
+    list_books = []
 
-        list_books = []
-
-        # url_links2 = []
+    # url_links2 = []

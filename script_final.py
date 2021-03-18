@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 
+from category import Category
+from book import Book
 
 # Get the url of the website then analyse its html
 page_url = "http://books.toscrape.com/"
@@ -39,27 +41,6 @@ def get_links_categories(a_link):
 
     return a_href_list
 
-
-class Category:
-
-    def __init__(self, name):
-        self.name = name
-        self.link = ''
-        self.books = []
-        # print(f"Le nom de la catégorie créée est : {name}")
-
-    def __str__(self):
-        return self.name
-
-    def add_link(self, link):
-        self.link = link
-        # print(f"Le nom de la catégorie créée est : {self.name} et le lien est : {link}")
-
-    def add_book(self, book):
-        print("On ajoute le livre " + book.title + " à la catégorie " + self.name)
-        self.books.append(book)
-
-
 list_categories = []
 
 for categoryName in get_names_categories(get_all_categories()):
@@ -79,16 +60,17 @@ url_page = requests.get(list_categories[0].link)
 soup = BeautifulSoup(url_page.text, 'html.parser')
 page_header = soup.select('div.page-header')[0].text.strip()
 
-h3_list = []
+# h3_list = []
 a_href_list2 = []
 all_h3 = soup.find_all('h3')
 for h3 in all_h3:
-    h3_list.append(h3)
+    # h3_list.append(h3)
     a_link2 = h3.select('a')
     for a in a_link2:
         a_href2 = a['href'].strip('../../../')
         a_href_list2.append(a_href2)
 
+# print(h3_list)
 
 url_links2 = []
 
@@ -96,32 +78,6 @@ for i in a_href_list2:
     url_links2.append(page_url + 'catalogue/' + i)
 
 print(url_links2)
-
-"""
-
-TEST créer classe Book
-
-"""
-
-
-class Book:
-
-    def __init__(self, title, category, description, universal_product_code, price_including_tax, price_excluding_tax, number_available, review_rating, product_page_url, image_url):
-        self.title = title
-        self.category = category
-        self.description = description
-        self.universal_product_code = universal_product_code
-        self.price_including_tax = price_including_tax
-        self.price_excluding_tax = price_excluding_tax
-        self.number_available = number_available
-        self.review_rating = review_rating
-        self.product_page_url = product_page_url
-        self.image_url = image_url
-        print(f"Le livre {title} est bien créé \n {category} \n {description} \n {universal_product_code} \n {price_including_tax} \n {price_excluding_tax} \n {number_available} \n {review_rating} \n {product_page_url} \n {image_url}")
-
-    def __str__(self):
-        return self.title
-
 
 for url_cat in url_links2:
 
