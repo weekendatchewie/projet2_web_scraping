@@ -12,3 +12,6 @@
 
     pip<version> install -r requirements.txt
 
+## 3. Execution du script
+
+    python<version> main.py
