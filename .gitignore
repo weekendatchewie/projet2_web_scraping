@@ -12,6 +12,9 @@
 # Fichiers CSV
 *.csv
 
+# Dossier des images
+/pictures
+
 # Images
 *.jpg
 

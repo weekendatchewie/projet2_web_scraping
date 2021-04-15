@@ -21,15 +21,25 @@ class Category:
 
         with open(path + '/' + self.name + '_book_info.csv', 'w') as csvfile:
             writer = csv.writer(csvfile)
-            csvfile.write("title,category,description,universal_product_code,price_including_tax,price_excluding_tax,number_available,review_rating,product_page_url,image_url: \n")
+            csvfile.write("title,category,description,universal_product_code,price_including_tax,price_excluding_tax,"
+                          "number_available,review_rating,product_page_url,image_url: \n")
             for book in self.books:
-                writer.writerow([book.title, book.category, book.description, book.universal_product_code, book.price_including_tax, book.price_excluding_tax, book.number_available, book.review_rating, book.product_page_url, book.image_url])
+                writer.writerow(
+                    [book.title, book.category, book.description, book.universal_product_code, book.price_including_tax,
+                     book.price_excluding_tax, book.number_available, book.review_rating, book.product_page_url,
+                     book.image_url])
+
+            print(f"le csv de {self.name} créé")
 
     def download_images(self):
+        path = 'pictures'
+        if not os.path.exists(path):
+            os.makedirs(path)
+
         for book in self.books:
             # Regex to change the name of the picture
             title = re.sub('[^a-zA-Z0-9 \n]', '', book.title)
 
-            with open(title + ".jpg", "wb") as file:
+            with open(path + '/' + title + ".jpg", "wb") as file:
                 response = requests.get(book.image_url)
                 file.write(response.content)

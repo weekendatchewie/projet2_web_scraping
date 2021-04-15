@@ -1,8 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 
-from category import Category
-from book import Book
+from Category.Category import Category
+from Book.Book import Book
 
 main_page = "http://books.toscrape.com/"
 
@@ -91,8 +91,8 @@ class ScrapBooks:
             availabity_book = info.select('tr > td')[5].text
             review_rating = info.select('tr > td')[6].text
 
-        book_details = Book(title_book, category_book, product_description, universal_product_code, price_with_tax, price_no_tax,
-                         availabity_book, review_rating, url_book, image_src)
+        book_details = Book(title_book, category_book, product_description, universal_product_code,
+                            price_with_tax, price_no_tax, availabity_book, review_rating, url_book, image_src)
 
         return book_details
 
@@ -103,9 +103,3 @@ class ScrapBooks:
     def download_images_books(self):
         for category in self.list_categories:
             category.download_images()
-
-
-scraper = ScrapBooks()
-scraper.get_all_categories()
-scraper.get_all_books()
-scraper.create_csv_books()
