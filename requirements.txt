@@ -13,3 +13,5 @@ soupsieve==2.0.1
 toml==0.10.2
 urllib3==1.26.2
 wrapt==1.12.1
+pylint==2.6.0
+flake8==3.9.0

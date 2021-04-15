@@ -6,5 +6,13 @@
 .idea/
 .vscode/
 
+# Dossier pour csv
+/csv_files
+
 # Fichiers CSV
 *.csv
+
+# Images
+*.jpg
+
+.DS_Store

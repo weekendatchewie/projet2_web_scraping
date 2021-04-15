@@ -1,21 +1,35 @@
+import csv
+import os
+import re
+import requests
+
+
 class Category:
 
     def __init__(self, name):
         self.name = name
-        self.link = []
         self.books = []
-        # print(f"Le nom de la catégorie créée est : {name}")
-
-    def add_link(self, link):
-        self.link = link
-        print(f"Le nom de la catégorie créée est : {self.name} et le lien est : {link}")
 
     def add_book(self, book):
-        print("On ajoute " + book.title + " à la catégorie " + self.name)
         self.books.append(book)
 
     def create_csv(self):
-        with open(self.name + '_book_info.csv', 'w') as csvfile:
-            csvfile.write("title,category: \n")
+        # create a folder to put the csv files into
+        path = 'csv_files'
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        with open(path + '/' + self.name + '_book_info.csv', 'w') as csvfile:
+            writer = csv.writer(csvfile)
+            csvfile.write("title,category,description,universal_product_code,price_including_tax,price_excluding_tax,number_available,review_rating,product_page_url,image_url: \n")
             for book in self.books:
-                csvfile.write(book.title + "," + book.category + '\n')
+                writer.writerow([book.title, book.category, book.description, book.universal_product_code, book.price_including_tax, book.price_excluding_tax, book.number_available, book.review_rating, book.product_page_url, book.image_url])
+
+    def download_images(self):
+        for book in self.books:
+            # Regex to change the name of the picture
+            title = re.sub('[^a-zA-Z0-9 \n]', '', book.title)
+
+            with open(title + ".jpg", "wb") as file:
+                response = requests.get(book.image_url)
+                file.write(response.content)
