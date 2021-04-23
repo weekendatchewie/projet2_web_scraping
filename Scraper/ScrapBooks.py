@@ -82,6 +82,9 @@ class ScrapBooks:
         # Get the product description
         product_description = soup.select('article > p')[0].text
 
+        # Get the review rating, number of stars
+        review_rating = soup.find('p', class_='star-rating').get('class')[1] + ' stars'
+
         # Get the informations of the book
         product_info = soup.select('table.table')
         for info in product_info:
@@ -89,7 +92,6 @@ class ScrapBooks:
             price_no_tax = info.select('tr > td')[2].text
             price_with_tax = info.select('tr > td')[3].text
             availabity_book = info.select('tr > td')[5].text
-            review_rating = info.select('tr > td')[6].text
 
         book_details = Book(title_book, category_book, product_description, universal_product_code,
                             price_with_tax, price_no_tax, availabity_book, review_rating, url_book, image_src)

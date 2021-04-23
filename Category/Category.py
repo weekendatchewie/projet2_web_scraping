@@ -29,8 +29,6 @@ class Category:
                      book.price_excluding_tax, book.number_available, book.review_rating, book.product_page_url,
                      book.image_url])
 
-            print(f"le csv de {self.name} créé")
-
     def download_images(self):
         path = 'pictures'
         if not os.path.exists(path):
